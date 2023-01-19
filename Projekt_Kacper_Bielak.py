@@ -88,3 +88,16 @@ while not done:
             pygame.draw.circle(screen, (255,0,0), (int(kule[i].x), int(kule[i].y)), promien_kuli)
         else:
             pygame.draw.circle(screen, (0,0,255), (int(kule[i].x), int(kule[i].y)), promien_kuli)
+    
+    wykres()
+    czas += 0.1
+    pygame.display.flip()
+    pygame.time.delay(10)
+
+    for i in range(len(kule)):
+        if kule[i].infected == True and czas > t:
+            kule[i].infected = False
+            niezarazliwi += 1
+            zarazliwi -= 1
+
+pygame.quit()
