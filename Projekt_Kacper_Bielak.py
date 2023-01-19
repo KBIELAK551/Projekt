@@ -1,13 +1,13 @@
 import pygame
 import random
 
-szerokosc_okna = 800
-wysokosc_okna = 800
+window_width = 800
+window_height = 800
 
-promien_kuli = 20
-srednica_kuli = promien_kuli * 2
+sphere_radius = 20
+ball_diameter = sphere_radius * 2
 
-class Kula:
+class Ball:
     def __init__(self, x, y, infected):
         self.x = x
         self.y = y
@@ -18,49 +18,49 @@ class Kula:
     def move(self):
         self.x += self.vx
         self.y += self.vy
-        if self.x > szerokosc_okna - promien_kuli or self.x < promien_kuli:
+        if self.x > window_width - sphere_radius or self.x < sphere_radius:
             self.vx = -self.vx
-        if self.y > wysokosc_okna - promien_kuli or self.y < promien_kuli:
+        if self.y > window_height - sphere_radius or self.y < sphere_radius:
             self.vy = - self.vy
 
-n = int(input("Podaj liczbę kul: "))
-t = float(input("Podaj czas transmisji choroby: "))
+n = int(input("Enter the number of balls: "))
+t = float(input("Enter the time of epidemic transmission: "))
 
 pygame.init()
-screen = pygame.display.set_mode((szerokosc_okna, wysokosc_okna))
-pygame.display.set_caption('Symulacja rozprzestrzeniania się choroby')
+screen = pygame.display.set_mode((window_width, window_height))
+pygame.display.set_caption('Simulation of the spread of the epidemic')
 
 
-margines_od_sciany = 10
-kule = []
+margin_from_the_wall = 10
+crutches = []
 for i in range(n):
-    x = random.randint(promien_kuli + margines_od_sciany, szerokosc_okna - margines_od_sciany)
-    y = random.randint(promien_kuli + margines_od_sciany, wysokosc_okna - margines_od_sciany)
-    kule.append(Kula(x, y, False))
+    x = random.randint(sphere_radius + margin_from_the_wall, window_width - margin_from_the_wall)
+    y = random.randint(sphere_radius + margin_from_the_wall, window_height - margin_from_the_wall)
+    crutches.append(Ball(x, y, False))
 
-index_zaraz = random.randint(0,n-1)
-kule[index_zaraz].infected = True
+bullet_carrier = random.randint(0,n-1)
+crutches[bullet_carrier].infected = True
 
-czas = 0
+time = 0
 
-nieruchome = []
-ile_nieruchomych = int(input("Podaj liczbę kul nieruchomych: "))
-for i in range(ile_nieruchomych):
-    index_nieruchomy = random.randint(0,n-1)
-    nieruchome.append(index_nieruchomy)
+immobile = []
+how_many_immobile = int(input("enter the number of stationary balls: "))
+for i in range(how_many_immobile):
+    index_immobile = random.randint(0,n-1)
+    immobile.append(index_immobile)
 
-zdrowi = n - 1
-zarazliwi = 1
-niezarazliwi = 0 
+healthy = n - 1
+contagious = 1
+not_contagious = 0 
 
 def wykres():
     pygame.draw.rect(screen, (255,255,255), (20, 20, 760, 70))
     pygame.draw.line(screen, (0,0,0), (20, 70), (780, 70))
     pygame.draw.line(screen, (0,0,0), (20, 20), (20, 70))
     pygame.draw.line(screen, (0,0,0), (780, 20), (780, 70))
-    pygame.draw.rect(screen, (255,0,0), (20, 20, 760*zarazliwi/n, 50))
-    pygame.draw.rect(screen, (0,255,0), (20, 20, 760*zdrowi/n, 50))
-    pygame.draw.rect(screen, (0,0,255), (20, 20, 760*niezarazliwi/n, 50))
+    pygame.draw.rect(screen, (255,0,0), (20, 20, 760*contagious/n, 50))
+    pygame.draw.rect(screen, (0,255,0), (20, 20, 760*healthy/n, 50))
+    pygame.draw.rect(screen, (0,0,255), (20, 20, 760*not_contagious/n, 50))
 
 done = False
 while not done:
@@ -70,34 +70,34 @@ while not done:
 
     screen.fill((255, 255, 255))
 
-    for i in range(len(kule)):
-        if i not in nieruchome:
-            kule[i].move()
-        for j in range(len(kule)):
-            odleglosc = ((kule[i].x - kule[j].x)**2 + (kule[i].y - kule[j].y)**2)**0.5
-            if odleglosc < srednica_kuli:
-                kule[i].vx = -kule[i].vx
-                kule[i].vy = -kule[i].vy
-                kule[j].vx = -kule[j].vx
-                kule[j].vy = -kule[j].vy
-                if kule[i].infected == True and kule[j].infected == False:
-                    kule[j].infected = True
-                    zarazliwi += 1
-                    zdrowi -= 1
-        if kule[i].infected == True:
-            pygame.draw.circle(screen, (255,0,0), (int(kule[i].x), int(kule[i].y)), promien_kuli)
+    for i in range(len(crutches)):
+        if i not in immobile:
+            crutches[i].move()
+        for j in range(len(crutches)):
+            distance = ((crutches[i].x - crutches[j].x)**2 + (crutches[i].y - crutches[j].y)**2)**0.5
+            if distance < ball_diameter:
+                crutches[i].vx = -crutches[i].vx
+                crutches[i].vy = -crutches[i].vy
+                crutches[j].vx = -crutches[j].vx
+                crutches[j].vy = -crutches[j].vy
+                if crutches[i].infected == True and crutches[j].infected == False:
+                    crutches[j].infected = True
+                    contagious += 1
+                    healthy -= 1
+        if crutches[i].infected == True:
+            pygame.draw.circle(screen, (255,0,0), (int(crutches[i].x), int(crutches[i].y)), sphere_radius)
         else:
-            pygame.draw.circle(screen, (0,0,255), (int(kule[i].x), int(kule[i].y)), promien_kuli)
+            pygame.draw.circle(screen, (0,0,255), (int(crutches[i].x), int(crutches[i].y)), sphere_radius)
     
     wykres()
-    czas += 0.1
+    time += 0.1
     pygame.display.flip()
     pygame.time.delay(10)
 
-    for i in range(len(kule)):
-        if kule[i].infected == True and czas > t:
-            kule[i].infected = False
-            niezarazliwi += 1
-            zarazliwi -= 1
+    for i in range(len(crutches)):
+        if crutches[i].infected == True and time > t:
+            crutches[i].infected = False
+            not_contagious += 1
+            contagious -= 1
 
 pygame.quit()
