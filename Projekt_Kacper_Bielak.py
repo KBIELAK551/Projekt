@@ -7,6 +7,13 @@ window_height = 800
 sphere_radius = 20
 ball_diameter = sphere_radius * 2
 
+n = int(input("Enter the number of balls: "))
+t = float(input("Enter the time of epidemic transmission: "))
+
+pygame.init()
+screen = pygame.display.set_mode((window_width, window_height), pygame.RESIZABLE)
+pygame.display.set_caption('Simulation of the spread of the epidemic')
+
 class Ball:
     def __init__(self, x, y, infected):
         self.x = x
@@ -23,17 +30,11 @@ class Ball:
         if self.y > window_height - sphere_radius or self.y < sphere_radius:
             self.vy = - self.vy
 
-n = int(input("Enter the number of balls: "))
-t = float(input("Enter the time of epidemic transmission: "))
-
-pygame.init()
-screen = pygame.display.set_mode((window_width, window_height))
-pygame.display.set_caption('Simulation of the spread of the epidemic')
-
-
 margin_from_the_wall = 10
+
 crutches = []
 for i in range(n):
+    width, height = screen.get_size() 
     x = random.randint(sphere_radius + margin_from_the_wall, window_width - margin_from_the_wall)
     y = random.randint(sphere_radius + margin_from_the_wall, window_height - margin_from_the_wall)
     crutches.append(Ball(x, y, False))
@@ -54,13 +55,16 @@ contagious = 1
 not_contagious = 0 
 
 def wykres():
-    pygame.draw.rect(screen, (255,255,255), (20, 20, 760, 70))
-    pygame.draw.line(screen, (0,0,0), (20, 70), (780, 70))
+    inner_margin = 40
+    outer_margin = 20
+    width, height = screen.get_size()
+    pygame.draw.rect(screen, (255,255,255), (20, 20, (width - outer_margin), 70))
+    pygame.draw.line(screen, (0,0,0), (20, 70), ((width - outer_margin), 70))
     pygame.draw.line(screen, (0,0,0), (20, 20), (20, 70))
-    pygame.draw.line(screen, (0,0,0), (780, 20), (780, 70))
-    pygame.draw.rect(screen, (255,0,0), (20, 20, 760*contagious/n, 50))
-    pygame.draw.rect(screen, (0,255,0), (20, 20, 760*healthy/n, 50))
-    pygame.draw.rect(screen, (0,0,255), (20, 20, 760*not_contagious/n, 50))
+    pygame.draw.line(screen, (0,0,0), ((width - outer_margin), 20), ((width - outer_margin), 70))
+    pygame.draw.rect(screen, (255,0,0), (20, 20, (width - inner_margin)*contagious/n, 50))
+    pygame.draw.rect(screen, (0,255,0), (20, 20, (width - inner_margin)*healthy/n, 50))
+    pygame.draw.rect(screen, (0,0,255), (20, 20, (width - inner_margin)*not_contagious/n, 50))
 
 done = False
 while not done:
