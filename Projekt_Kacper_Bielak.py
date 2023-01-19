@@ -52,3 +52,39 @@ for i in range(ile_nieruchomych):
 zdrowi = n - 1
 zarazliwi = 1
 niezarazliwi = 0 
+
+def wykres():
+    pygame.draw.rect(screen, (255,255,255), (20, 20, 760, 70))
+    pygame.draw.line(screen, (0,0,0), (20, 70), (780, 70))
+    pygame.draw.line(screen, (0,0,0), (20, 20), (20, 70))
+    pygame.draw.line(screen, (0,0,0), (780, 20), (780, 70))
+    pygame.draw.rect(screen, (255,0,0), (20, 20, 760*zarazliwi/n, 50))
+    pygame.draw.rect(screen, (0,255,0), (20, 20, 760*zdrowi/n, 50))
+    pygame.draw.rect(screen, (0,0,255), (20, 20, 760*niezarazliwi/n, 50))
+
+done = False
+while not done:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+
+    screen.fill((255, 255, 255))
+
+    for i in range(len(kule)):
+        if i not in nieruchome:
+            kule[i].move()
+        for j in range(len(kule)):
+            odleglosc = ((kule[i].x - kule[j].x)**2 + (kule[i].y - kule[j].y)**2)**0.5
+            if odleglosc < srednica_kuli:
+                kule[i].vx = -kule[i].vx
+                kule[i].vy = -kule[i].vy
+                kule[j].vx = -kule[j].vx
+                kule[j].vy = -kule[j].vy
+                if kule[i].infected == True and kule[j].infected == False:
+                    kule[j].infected = True
+                    zarazliwi += 1
+                    zdrowi -= 1
+        if kule[i].infected == True:
+            pygame.draw.circle(screen, (255,0,0), (int(kule[i].x), int(kule[i].y)), promien_kuli)
+        else:
+            pygame.draw.circle(screen, (0,0,255), (int(kule[i].x), int(kule[i].y)), promien_kuli)
